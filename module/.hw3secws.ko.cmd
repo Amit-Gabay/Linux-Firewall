@@ -1,0 +1,1 @@
+cmd_/home/fw/Firewall/module/hw3secws.ko := ld -r -m elf_i386 -T ./scripts/module-common.lds --build-id  -o /home/fw/Firewall/module/hw3secws.ko /home/fw/Firewall/module/hw3secws.o /home/fw/Firewall/module/hw3secws.mod.o ;  true

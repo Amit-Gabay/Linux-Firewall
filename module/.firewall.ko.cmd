@@ -1,0 +1,1 @@
+cmd_/home/fw/Firewall/module/firewall.ko := ld -r -m elf_i386 -T ./scripts/module-common.lds --build-id  -o /home/fw/Firewall/module/firewall.ko /home/fw/Firewall/module/firewall.o /home/fw/Firewall/module/firewall.mod.o ;  true
