@@ -43,8 +43,9 @@ typedef enum {
 // auxiliary values, for your convenience
 #define IP_VERSION		(4)
 #define PORT_ANY		(0)
-#define PORT_ABOVE_1023	(1023)
+#define PORT_ABOVE_1023		(1023)
 #define MAX_RULES		(50)
+#define LOG_INIT_SIZE		(10)
 
 // device minor numbers, for your convenience
 typedef enum {
@@ -94,6 +95,13 @@ typedef struct {
 	reason_t     	reason;       	// rule#index, or values from: reason_t
 	unsigned int   	count;        	// counts this line's hits
 } log_row_t;
+
+// log resizing array
+typedef struct {
+	log_row_t *logs_array;
+	int allocated_num;
+	int occupied_num;
+} log_t;
 
 // packet data
 typedef struct {

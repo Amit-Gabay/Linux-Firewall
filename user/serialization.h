@@ -7,6 +7,13 @@
 #define MAX_RULES		(50)
 
 typedef enum {
+	REASON_FW_INACTIVE           = -1,
+	REASON_NO_MATCHING_RULE      = -2,
+	REASON_XMAS_PACKET           = -4,
+	REASON_ILLEGAL_VALUE         = -6,
+} reason_t;
+
+typedef enum {
 	DIRECTION_IN 	= 0x01,
 	DIRECTION_OUT 	= 0x02,
 	DIRECTION_ANY 	= DIRECTION_IN | DIRECTION_OUT,
@@ -45,8 +52,23 @@ typedef struct {
 	uint8_t	action;   			// valid values: NF_ACCEPT, NF_DROP
 } rule_t;
 
+// logging
+typedef struct {
+	unsigned long  	timestamp;     	// time of creation/update
+	unsigned char  	protocol;     	// values from: prot_t
+	unsigned char  	action;       	// valid values: NF_ACCEPT, NF_DROP
+	unsigned int   	src_ip;		// if you use this struct in userspace, change the type to unsigned int
+	unsigned int	dst_ip;		// if you use this struct in userspace, change the type to unsigned int
+	unsigned short	src_port;	// if you use this struct in userspace, change the type to unsigned short
+	unsigned short	dst_port;	// if you use this struct in userspace, change the type to unsigned short
+	reason_t     	reason;       	// rule#index, or values from: reason_t
+	unsigned int   	count;        	// counts this line's hits
+} log_row_t;
+
 int print_rules(char *buffer, size_t buffer_size);
 void print_single_rule(rule_t *rule);
 int string_to_rules(char *buffer, size_t buffer_size, char *rules, size_t *rules_size);
+void print_log_row(log_row_t *log_row);
+void print_log_header();
 
 #endif // _SERIALIZATION_H_

@@ -13,7 +13,8 @@ int show_log();
 int clear_log();
 
 static const char *RULES_PATH = "/sys/class/Firewall_Class/Firewall_Device/rules";
-//static const char *LOG_PATH = "/sys/class/Firewall_Class/Firewall_Device/rules";
+static const char *RESET_PATH = "/sys/class/Firewall_Class/Firewall_Device/reset";
+static const char *LOG_PATH   = "/dev/Firewall_Device";
 static size_t PAGE_SIZE;
 
 int main(int argc, char *argv[])
@@ -110,8 +111,6 @@ int load_rules(char *file_path)
 	{
 		return -1;
 	}
-
-	printf("%c\n", buffer[0]);
 	
 	/* Convert rules from textual form into structs array form */
 	conversion_status = string_to_rules(buffer, bytes_read, rules, &rules_size);
@@ -141,7 +140,49 @@ int load_rules(char *file_path)
 }
 
 int show_log()
-{ return 0; }
+{
+	log_row_t *buffer = (log_row_t *) malloc(sizeof(log_row_t));
+	size_t data_size;
+	int rules_attr_fd = open(LOG_PATH, O_RDONLY);
+
+	if (rules_attr_fd == -1)
+	{
+		return -1;
+	}
+
+	print_log_header();
+
+	while ((data_size = read(rules_attr_fd, buffer, sizeof(log_row_t))) > 0)
+	{
+		print_log_row(buffer);
+	}
+
+	if (close(rules_attr_fd) == -1)
+	{
+		return -1;
+	}
+
+	free(buffer);
+	return 0;
+}
 
 int clear_log()
-{ return 0; }
+{
+	int reset_file_fd = open(RESET_PATH, O_WRONLY);
+	if (reset_file_fd == -1)
+	{
+		return -1;
+	}
+	if (write(reset_file_fd, "1", 2) != 1)
+	{
+		errno = EIO;
+		return -1;
+	}
+	if (close(reset_file_fd) == -1)
+	{
+		return -1;
+	}
+	return 0;
+}
+
+

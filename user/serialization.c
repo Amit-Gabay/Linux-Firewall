@@ -89,31 +89,31 @@ void print_single_rule(rule_t *rule)
 	{ protocol = "any"; }
 
 	/* Convert src_port to string */
-	if (ntohs(rule->src_port) == 0)
+	if (rule->src_port == 0)
 	{
 		sprintf(src_port, "any");
 	}
-	else if (ntohs(rule->src_port) == 1023)
+	else if (rule->src_port == 1023)
 	{
 		sprintf(src_port, ">1023");
 	}
 	else
 	{
-		sprintf(src_port, "%hu", ntohs(rule->src_port));
+		sprintf(src_port, "%hu", rule->src_port);
 	}
 
 	/* Convert dst_port to string */
-	if (ntohs(rule->dst_port) == 0)
+	if (rule->dst_port == 0)
 	{
 		sprintf(dst_port, "any");
 	}
-	else if (ntohs(rule->dst_port) == 1023)
+	else if (rule->dst_port == 1023)
 	{
 		sprintf(dst_port, ">1023");
 	}
 	else
 	{
-		sprintf(dst_port, "%hu", ntohs(rule->dst_port));
+		sprintf(dst_port, "%hu", rule->dst_port);
 	}
 
 	/* Convert ack to string */
@@ -226,18 +226,22 @@ int string_to_rules(char *buffer, size_t buffer_size, char *rules, size_t *rules
 		/* Parse src_port field */
 		next_field = strsep(&next_rule, " ");
 		if (next_rule == NULL) { return -1; }
-		if (strcmp(next_field, ">1023") == 0)
-		{ rule_struct.src_port = htons(1023); }
+		if (strcmp(next_field, "any") == 0)
+		{ rule_struct.src_port = 0; }
+		else if (strcmp(next_field, ">1023") == 0)
+		{ rule_struct.src_port = 1023; }
 		else
-		{ rule_struct.src_port = htons(atoi(next_field)); }
+		{ rule_struct.src_port = atoi(next_field); }
 
 		/* Parse dst_port field */
 		next_field = strsep(&next_rule, " ");
 		if (next_rule == NULL) { return -1; }
-		if (strcmp(next_field, ">1023") == 0)
-		{ rule_struct.dst_port = htons(1023); }
+		if (strcmp(next_field, "any") == 0)
+		{ rule_struct.dst_port = 0; }
+		else if (strcmp(next_field, ">1023") == 0)
+		{ rule_struct.dst_port = 1023; }
 		else
-		{ rule_struct.dst_port = htons(atoi(next_field)); }
+		{ rule_struct.dst_port = atoi(next_field); }
 
 		/* Parse ack field */
 		next_field = strsep(&next_rule, " ");
@@ -272,6 +276,63 @@ int string_to_rules(char *buffer, size_t buffer_size, char *rules, size_t *rules
 	}
 	return 0;
 }
+
+void print_log_header()
+{
+	printf("%-32s%-24s%-24s%-16s%-16s%-16s%s\n", "timestamp", "src_ip", "dst_ip", "src_port", "dst_port", "protocol", "action");
+	printf("%-32s%s\n", "reason", "count");
+}
+
+void print_log_row(log_row_t *row)
+{
+	char *timestamp = "18/11/2021 00:00:00";
+	char src_ip[16];
+	char dst_ip[16];
+	char src_port[6];
+	char dst_port[6];
+	char *protocol;
+	char *action;
+	char reason[24];
+	char count[11];
+
+	inet_ntop(AF_INET, &row->src_ip, src_ip, 16);
+	inet_ntop(AF_INET, &row->dst_ip, dst_ip, 16);
+
+	sprintf(src_port, "%hu", row->src_port);
+	sprintf(dst_port, "%hu", row->dst_port);
+
+	if (row->protocol == PROT_ICMP)
+	{ protocol = "icmp"; }
+	else if (row->protocol == PROT_TCP)
+	{ protocol = "tcp"; }
+	else if (row->protocol == PROT_UDP)
+	{ protocol = "udp"; }
+	else
+	{ protocol = "other"; }
+
+	if (row->action == NF_ACCEPT)
+	{ action = "accept"; }
+	else
+	{ action = "drop"; }
+	
+	if (row->reason == REASON_FW_INACTIVE)
+	{ sprintf(reason, "%s", "REASON_FW_INACTIVE"); }
+	else if (row->reason == REASON_NO_MATCHING_RULE)
+	{ sprintf(reason, "%s", "REASON_NO_MATCHING_RULE"); }
+	else if (row->reason == REASON_XMAS_PACKET)
+	{ sprintf(reason, "%s", "REASON_XMAS_PACKET"); }
+	else if (row->reason == REASON_ILLEGAL_VALUE)
+	{ sprintf(reason, "%s", "REASON_ILLEGAL_VALUE"); }
+	else
+	{ sprintf(reason, "%d", row->reason); }
+	
+	sprintf(count, "%u", row->count);
+
+	printf("%-32s%-24s%-24s%-16s%-16s%-16s%s\n", timestamp, src_ip, dst_ip, src_port, dst_port, protocol, action);
+	printf("%-32s%s\n", reason, count);
+}
+
+
 
 static unsigned int cidr_to_mask(unsigned int cidr)
 {
