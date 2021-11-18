@@ -56,16 +56,17 @@ static unsigned int inspect_packet(void *priv, struct sk_buff *skb, const struct
 {
 	char *src_device;
 	char *dst_device;
+
 	src_device = state->in->name;
 	dst_device = state->out->name;
 	/* Deduce the packet's direction by the networking devices direction */
 	if (src_device[5] == IN_DEVICE_NUM && dst_device[5] == OUT_DEVICE_NUM)
 	{
 		/* Packet is going INSIDE the local network */
-		return packet_verdict(RULES_TABLE, RULES_NUM, skb, DIRECTION_IN);
+		return packet_verdict(RULES_TABLE, RULES_NUM, skb, DIRECTION_IN, &LOG);
 	}
 	/* Else, packet is going OUTSIDE the local network */
-	return packet_verdict(RULES_TABLE, RULES_NUM, skb, DIRECTION_OUT);
+	return packet_verdict(RULES_TABLE, RULES_NUM, skb, DIRECTION_OUT, &LOG);
 }
 
 ssize_t show_rules(struct device* device, struct device_attribute *attribute, char *buffer)

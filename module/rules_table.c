@@ -1,4 +1,5 @@
 #include "fw.h"
+#include "log.h"
 #include <linux/kernel.h>
 #include <linux/netfilter.h>
 #include <linux/netfilter_ipv4.h>
@@ -9,53 +10,38 @@
 #define TRUE		(1)
 #define FALSE		(0)
 
-int packet_verdict(rule_t *rules_table, int rules_num, struct sk_buff *skb, direction_t packet_direction);
-int find_matching_rule(rule_t *rules_table, int rules_num, struct sk_buff *skb, direction_t direction);
+unsigned int packet_verdict(rule_t *rules_table, int rules_num, struct sk_buff *skb, direction_t packet_direction, log_t *log);
 int is_valid_rule(rule_t *rules_table, int rule_index);
 int is_rule_matching(packet_t *packet, rule_t *rule);
 
 
-int packet_verdict(rule_t *rules_table, int rules_num, struct sk_buff *skb, direction_t packet_direction)
-{
-	__be16 protocol;
-	int matched_rule_index;
-	struct iphdr *ip_header = (struct iphdr *) skb_network_header(skb);
-
-	if (ip_header->version != IP_VERSION)
-	{
-		return NF_ACCEPT;
-	}
-
-	protocol = ip_header->protocol;
-	if (protocol != PROT_ICMP && protocol != PROT_TCP && protocol != PROT_UDP)
-	{
-		return NF_ACCEPT;
-	}
-
-	/* Else, we have to find a match in the rules table */
-	matched_rule_index = find_matching_rule(rules_table, rules_num, skb, packet_direction);
-	if (matched_rule_index == -1)
-	{
-		return NF_DROP;
-	}
-	
-	/* Return the action of the matching rule in the rules table */
-	return rules_table[matched_rule_index].action;
-}
-
-int find_matching_rule(rule_t *rules_table, int rules_num, struct sk_buff *skb, direction_t direction)
+unsigned int packet_verdict(rule_t *rules_table, int rules_num, struct sk_buff *skb, direction_t direction, log_t *log)
 {
 	int i;
 	struct iphdr *ip_header = (struct iphdr *) skb_network_header(skb);
 	packet_t packet_struct;
 	packet_t *packet = &packet_struct;
 	struct tcphdr *tcp_header = NULL;
-	struct udphdr *udp_header = NULL;
+	struct udphdr *udp_header = NULL;	
+	reason_t verdict_reason;
+	unsigned int verdict;
+
+	if (ip_header->version != IP_VERSION)
+	{
+		/* Accept packet without logging */
+		return NF_ACCEPT;
+	}
+
+	packet->protocol = ip_header->protocol;
+	if (packet->protocol != PROT_ICMP && packet->protocol != PROT_TCP && packet->protocol != PROT_UDP)
+	{
+		/* Accept packet without logging */
+		return NF_ACCEPT;
+	}
 	
 	packet->src_ip = ip_header->saddr;
 	packet->dst_ip = ip_header->daddr;
 	/* CHECK IF LOOPBACK */
-	packet->protocol = ip_header->protocol;
 
 	/* Extract data from packet */
 	if (packet->protocol == PROT_ICMP)
@@ -66,9 +52,12 @@ int find_matching_rule(rule_t *rules_table, int rules_num, struct sk_buff *skb, 
 	{
 		tcp_header = (struct tcphdr *) skb_transport_header(skb);
 
-		if ((tcp_header->th_flags & TH_SYN == 1) && (tcp_header->th_flags & TH_FIN == 1) && (tcp_header->th_flags & TH_SYN == 1))
+		if ((tcp_header->fin == 1) && (tcp_header->urg == 1) && (tcp_header->psh == 1))
 		{
-			/* X-Mas packet */
+			verdict_reason = REASON_XMAS_PACKET;
+			verdict = NF_DROP;
+			log_packet(log, packet, verdict_reason, verdict);
+			return verdict;
 		}
 
 		packet->src_port = ntohs(tcp_header->source);
@@ -87,10 +76,17 @@ int find_matching_rule(rule_t *rules_table, int rules_num, struct sk_buff *skb, 
 	{	
 		if (is_rule_matching(packet, &(rules_table[i])) == TRUE)
 		{
-			return i;
+			/* If found for the packet a matching rule, set the rule index as the reason and return the rule index */
+			verdict_reason = i;
+			verdict = rules_table[i].action;
+			log_packet(log, packet, verdict_reason, verdict);
+			return verdict;
 		}
 	}
-	return FAILURE;	/* No match found - Something went wrong */
+	verdict_reason = REASON_NO_MATCHING_RULE;
+	verdict = NF_DROP;
+	log_packet(log, packet, verdict_reason, verdict);
+	return verdict;	/* No matching rule found for the packet */
 }
 
 /* A function which compares the each field of the packet to its corresponding rule field */

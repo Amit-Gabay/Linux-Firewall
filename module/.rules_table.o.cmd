@@ -1253,6 +1253,7 @@ deps_/home/fw/Firewall/module/rules_table.o := \
   include/uapi/linux/tcp.h \
   include/linux/udp.h \
   include/uapi/linux/udp.h \
+  /home/fw/Firewall/module/log.h \
 
 /home/fw/Firewall/module/rules_table.o: $(deps_/home/fw/Firewall/module/rules_table.o)
 

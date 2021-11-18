@@ -7,8 +7,7 @@
 #include <linux/netfilter_ipv4.h>
 #include <linux/string.h>
 
-int packet_verdict(rule_t *rules_table, int rules_num, struct sk_buff *skb, direction_t packet_direction);
-int find_matching_rule(rule_t *rules_table, int rules_num, struct sk_buff *skb, direction_t direction);
+unsigned int packet_verdict(rule_t *rules_table, int rules_num, struct sk_buff *skb, direction_t packet_direction, log_t *log);
 int is_valid_rule(rule_t *rules_table, int rule_index);
 int is_rule_matching(packet_t *packet, rule_t *rule);
 
