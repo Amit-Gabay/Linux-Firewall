@@ -1,11 +1,13 @@
-# Description
+# 🐧 Linux kernel stateful firewall 🧱
+
+## Description
 
 A stateful Linux firewall based on kernel module. consists of firewall kernel module aside to 3 userspace proxy servers (FTP, HTTP, SMTP).
 In addition, I've implemented an IPS (Intrusion Prevetion System) for HTTP traffic as an protection to the Pie-Reigster 3.7.1.4 RCE vulnerability.
 The firewall includes a DLP system (Data Leak Prevention) for HTTP / SMTP traffic, in order to detect and prevent leakage of C source code.
 
 
-## Idea
+## Implementation
 
 ### Kernel Side
 
@@ -13,13 +15,18 @@ A kernel module which intercepts network traffic, inspects each packet and deter
 In general case:
 * checks in the rules table wheter the packet is allowed or not. The rules table works as an allow-list which means - each packet which doesn't match any valid rule, being dropped.
 * Blocks any xmas packets.
-* 
+
 If it's an TCP packet:
 * Makes sure the packet is part of a valid TCP connection (by maintaining a TCP connections table, using TCP state machine).
 * For HTTP / FTP / SMTP packets, redirects the packet to the corresponding userspace proxy server for deeper inspection and an appropriate verdict.
 
-### Userspace side
+### Userspace Side
 
+Consists of:
+* Firewall control panel.
+* SMTP, HTTP, FTP proxy servers.
+
+Each proxy server 
 
 ## Usage
 
