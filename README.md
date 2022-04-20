@@ -2,10 +2,15 @@
 
 ## Description
 
-A stateful Linux firewall based on kernel module. consists of firewall kernel module aside to 3 userspace proxy servers (FTP, HTTP, SMTP).
-In addition, I've implemented an IPS (Intrusion Prevetion System) for HTTP traffic as an protection to the Pie-Reigster 3.7.1.4 RCE vulnerability.
-The firewall includes a DLP system (Data Leak Prevention) for HTTP / SMTP traffic, in order to detect and prevent leakage of C source code.
+A stateful Linux firewall which is implemented as a kernel module.
+Assisted by 3 userspace proxy servers:
+* FTP
+* SMTP
+* HTTP
 
+As part of the firewall's protection, I've implemented:
+* IPS (Intrusion Prevention System) for blocking HTTP exploits to the vulnerability: Pie-Register 3.7.1.4 RCE
+* DLP system (Data Prevention System) which inspects HTTP / SMTP traffic, detects C source code and prevent its leakage.
 
 ## Implementation
 
@@ -26,7 +31,7 @@ Consists of:
 * Firewall control panel.
 * SMTP, HTTP, FTP proxy servers.
 
-Each proxy server 
+Each proxy server above, inspects and determines whether to ACCEPT or DROP packets of its particular protocol.
 
 ## Usage
 
