@@ -15,22 +15,27 @@ Userspace side- In the userspace side, I've added a proxy server at "smtp/smtp_p
 
 ## Usage
 
-inside the "module" directory, open terminal and execute the following commands:
+First, compile and install the kernel module:
 ```
-$ make						/* Compile the kernel module files with certain flags */
-$ insmod firewall.ko				/* Install the firewall module in the kernel */
-$ cd ../user/					/* Change directory to user */
-$ make						/* Compile the userspace files with certain flags */
-$ ./firewall_control load_rules rules.txt	/* In order to load rules.txt as rules table to the firewall */
+$ cd ./module/
+$ make						
+$ insmod firewall.ko
+```
 
-In a new terminal (Inside the project directory):
-$ cd ./http
-$ sudo python http_proxy.py			/* In order to run the HTTP proxy server */
+Then, compile the firewall control panel:
+```
+$ cd ../user/				
+$ make						
+```
 
-In another new terminal (Inside the project directory):
-$ cd ./smtp
-$ sudo python smtp_proxy.py			/* In order to run the SMTP proxy server */
+In order to load rules into the firewall's rules table:
+```
+$ ./firewall_control load_rules rules.txt
+```
 
-$ rmmod firewall				/* Remove the firewall module from the kernel */
+In order to run each proxy server (e.g. HTTP proxy):
+```
+$ cd ../http/
+$ sudo python http_proxy.py
 ```
 
