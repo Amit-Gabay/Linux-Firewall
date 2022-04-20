@@ -9,8 +9,8 @@ Assisted by 3 userspace proxy servers:
 * HTTP
 
 As part of the firewall's protection, I've implemented the following systems:
-* IPS (Intrusion Prevention System) for blocking HTTP exploits to the vulnerability: Pie-Register 3.7.1.4 RCE
-* DLP system (Data Prevention System) which inspects HTTP / SMTP traffic, detects C source code and prevent its leakage.
+* IPS 🔎 (Intrusion Prevention System) for blocking HTTP exploits to the vulnerability: Pie-Register 3.7.1.4 RCE.
+* DLP 💧 (Data Leak Prevention) system which inspects HTTP / SMTP traffic, detects C source code and prevent its leakage.
 
 ## Implementation
 
@@ -31,7 +31,7 @@ Consists of:
 * Firewall control panel.
 * SMTP, HTTP, FTP proxy servers.
 
-Each proxy server above, inspects and determines whether to ACCEPT or DROP packets of its particular protocol.
+Each of the proxy servers above, inspects and determines whether to ACCEPT or DROP packets of its particular protocol.
 
 ## Usage
 
