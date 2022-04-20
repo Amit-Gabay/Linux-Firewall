@@ -10,11 +10,13 @@ The firewall includes a DLP system (Data Leak Prevention) for HTTP / SMTP traffi
 ### Kernel Side
 
 A kernel module which intercepts network traffic, inspects each packet and determine its verdict using the following guidelines:
-* Generally, checks in the rules table wheter the packet is allowed or not. The rules table works as an allow-list which means - each packet which doesn't match any valid rule, being dropped.
-* If it's an TCP packet:
-** Firstly, makes sure the packet is part of a valid TCP connection (by maintaining a TCP connections table, using TCP state machine).
-** For HTTP / FTP / SMTP packets, redirects the packet to the corresponding userspace proxy server for deeper inspection and an appropriate verdict.
+In general case:
+* checks in the rules table wheter the packet is allowed or not. The rules table works as an allow-list which means - each packet which doesn't match any valid rule, being dropped.
 * Blocks any xmas packets.
+* 
+If it's an TCP packet:
+* Makes sure the packet is part of a valid TCP connection (by maintaining a TCP connections table, using TCP state machine).
+* For HTTP / FTP / SMTP packets, redirects the packet to the corresponding userspace proxy server for deeper inspection and an appropriate verdict.
 
 ### Userspace side
 
