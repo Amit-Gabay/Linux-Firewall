@@ -1,7 +1,3 @@
-By: Amit Gabay
-Date: 14/02/2022
-
-
 # Description
 
 A stateful Linux firewall based on kernel module. consists of firewall kernel module aside to 3 userspace proxy servers (FTP, HTTP, SMTP).
