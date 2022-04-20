@@ -8,7 +8,7 @@ Assisted by 3 userspace proxy servers:
 * SMTP
 * HTTP
 
-As part of the firewall's protection, I've implemented:
+As part of the firewall's protection, I've implemented the following systems:
 * IPS (Intrusion Prevention System) for blocking HTTP exploits to the vulnerability: Pie-Register 3.7.1.4 RCE
 * DLP system (Data Prevention System) which inspects HTTP / SMTP traffic, detects C source code and prevent its leakage.
 
