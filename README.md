@@ -21,7 +21,7 @@ In general case:
 * checks in the rules table wheter the packet is allowed or not. The rules table works as an allow-list which means - each packet which doesn't match any valid rule, being dropped.
 * Blocks any xmas packets 🎅🏽.
 
-If it's an TCP packet:
+For TCP packets:
 * Makes sure the packet is part of a valid TCP connection (by maintaining a TCP connections table, using TCP state machine).
 * For HTTP / FTP / SMTP packets, redirects the packet to the corresponding userspace proxy server for deeper inspection and an appropriate verdict.
 
