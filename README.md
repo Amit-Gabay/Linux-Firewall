@@ -18,7 +18,7 @@ As part of the firewall's protection, I've implemented the following systems:
 
 A kernel module which intercepts network traffic, inspects each packet and determine its verdict using the following guidelines:
 In general case:
-* checks in the rules table wheter the packet is allowed or not. The rules table works as an allow-list which means - each packet which doesn't match any valid rule, being dropped.
+* Checks in the rules table wheter the packet is allowed or not. The rules table works as an allow-list which means - each packet which doesn't match any valid rule, being dropped.
 * Blocks any xmas packets 🎅🏽.
 
 For TCP packets:
