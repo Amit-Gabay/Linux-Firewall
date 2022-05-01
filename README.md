@@ -2,7 +2,8 @@
 
 ## Description
 
-A stateful Linux firewall which is implemented as a kernel module.
+A stateful Linux network firewall which is implemented as a kernel module.
+Performs DPI (Deep Packet Inspection).
 Assisted by 3 userspace proxy servers:
 * FTP
 * SMTP
