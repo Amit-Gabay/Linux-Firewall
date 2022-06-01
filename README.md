@@ -60,3 +60,20 @@ $ cd ../http/
 $ sudo python http_proxy.py
 ```
 
+## Rules file format
+
+The rules table of the firewall is a .txt file, when each line is in the following format:
+```
+<rule name> <direction> <src subnet> <dst subnet> <protocol> <src ports> <dst ports> <?> <accept / drop>
+```
+
+Rules file example:
+```
+loopback any 127.0.0.1/8 127.0.0.1/8 any any any any accept
+GW_attack any any 10.0.2.15/32 any any any any drop
+spoof1 in 10.0.1.1/24 any any any any any drop
+spoof2 out 10.0.2.2/24 any any any any any drop
+telnet1 out 10.0.1.1/24 any TCP >1023 23 any accept
+telnet2 in any 10.0.1.1/24 TCP 23 >1023 yes accept
+default any any any any any any any drop
+```
