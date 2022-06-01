@@ -51,7 +51,7 @@ $ make
 
 In order to load rules into the firewall's rules table:
 ```
-$ ./firewall_control load_rules rules.txt
+$ ./firewall_control load_rules <rules file>
 ```
 
 In order to run each proxy server (e.g. HTTP proxy):
