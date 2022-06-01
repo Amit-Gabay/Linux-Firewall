@@ -64,7 +64,7 @@ $ sudo python http_proxy.py
 
 The rules table of the firewall is a .txt file, when each line is in the following format:
 ```
-<rule name> <direction> <src subnet> <dst subnet> <protocol> <src ports> <dst ports> <?> <accept / drop>
+<rule name> <direction> <src subnet> <dst subnet> <protocol> <src ports> <dst ports> <ACK bit> <accept / drop>
 ```
 
 Rules file example:
