@@ -62,7 +62,8 @@ $ sudo python http_proxy.py
 
 ## Rules file format
 
-Each packet is being checked against the rules table by rules order from top to bottom - which means higher rules are more generic.
+Each packet is being checked against the rules table by rules arrangement in the rules file,
+from top to bottom - which means higher rules are more generic.
 The rules table of the firewall is a .txt file, when each line is in the following format:
 ```
 <rule name> <direction> <src subnet> <dst subnet> <protocol> <src ports> <dst ports> <ACK bit> <accept / drop>
